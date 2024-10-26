@@ -1,0 +1,220 @@
+<html><head><meta charset="UTF-8" /><title>Terry Crochet - Crochet Queen in Kenya</title>
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<section class="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-content">
+    <div class="glitch-wrapper">
+      <h1 class="hero-title glitch">Terry Crochets</h1>
+    </div>
+    <p class="hero-subtitle">Breaking the Rules of Traditional Crochet</p>
+  </div>
+</section>
+
+<section class="section manifesto">
+  <h2 class="section-title">Manifesto</h2>
+  <p class="manifesto-text">
+    I don't make your grandmother's doilies. I create wearable art that challenges the status quo.
+    Each piece is a rebellion against boring, traditional crochet. My hooks are my weapons, and yarn is my medium of revolution.
+  </p>
+</section>
+
+<section class="section portfolio">
+  <h2 class="section-title">Radical Creations</h2>
+  <div class="portfolio-grid" id="portfolio-grid">
+    <div class="portfolio-item">
+      <img src="assets/neon.jpg" alt="NEON NIGHTS - UV-reactive yarn installation that comes alive after dark" width="600" height="400"/>
+      <div class="portfolio-info">
+        <h3 class="portfolio-title">NEON NIGHTS</h3>
+        <p class="portfolio-description">UV-reactive yarn installation that comes alive after dark</p>
+        <div class="portfolio-tags">
+          <span class="tag">Interactive</span>
+          <span class="tag">Glow-in-dark</span>
+          <span class="tag">Installation</span>
+        </div>
+      </div>
+    </div>
+    <div class="portfolio-item">
+      <img src="assets/sweater.jpg" alt="CYBER PUNK SWEATER - LED-embedded knitwear with programmable patterns" width="600" height="400"/>
+      <div class="portfolio-info">
+        <h3 class="portfolio-title">CYBER PUNK SWEATER</h3>
+        <p class="portfolio-description">LED-embedded knitwear with programmable patterns</p>
+        <div class="portfolio-tags">
+          <span class="tag">Wearable</span>
+          <span class="tag">Tech</span>
+          <span class="tag">Limited Edition</span>
+        </div>
+      </div>
+    </div>
+    <div class="portfolio-item">
+      <img src="assets/urban.jpg" alt="URBAN JUNGLE - Graffiti-inspired wall hanging with metallic threads" width="600" height="400"/>
+      <div class="portfolio-info">
+        <h3 class="portfolio-title">URBAN JUNGLE</h3>
+        <p class="portfolio-description">Graffiti-inspired wall hanging with metallic threads</p>
+        <div class="portfolio-tags">
+          <span class="tag">Street Art</span>
+          <span class="tag">Mixed Media</span>
+          <span class="tag">Statement Piece</span>
+        </div>
+      </div>
+    </div>
+    <div class="portfolio-item">
+      <img src="assets/glitch.jpg" alt="DIGITAL GLITCH - Corrupted data visualization in textile form" width="600" height="400"/>
+      <div class="portfolio-info">
+        <h3 class="portfolio-title">DIGITAL GLITCH</h3>
+        <p class="portfolio-description">Corrupted data visualization in textile form</p>
+        <div class="portfolio-tags">
+          <span class="tag">Conceptual</span>
+          <span class="tag">Digital Art</span>
+          <span class="tag">Exhibition</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="contact">
+  <h2 class="section-title">Join the Revolution</h2>
+  <p>Let's create something that breaks all the rules</p>
+  <div class="social-links">
+    <a href="https://instagram.com/yarnrebel" class="social-link">INSTAGRAM</a>
+    <a href="https://tiktok.com/@yarnrebel" class="social-link">TIKTOK</a>
+    <a href="mailto:rebel@yarnrebel.com" class="social-link">COLLAB</a>
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+class YarnTrail {
+  constructor(scene) {
+    this.scene = scene;
+    this.points = [];
+    this.maxPoints = 100;
+    
+    const curve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-5, 0, 0),
+      new THREE.Vector3(0, 5, 0),
+      new THREE.Vector3(5, 0, 0),
+      new THREE.Vector3(0, -5, 0)
+    ]);
+    
+    const points = curve.getPoints(50);
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    
+    const material = new THREE.LineBasicMaterial({
+      color: 0xff3366,
+      linewidth: 3,
+      transparent: true,
+      opacity: 0.8
+    });
+    
+    this.line = new THREE.Line(geometry, material);
+    this.scene.add(this.line);
+    
+    this.time = 0;
+  }
+  
+  update() {
+    this.time += 0.01;
+    
+    const points = this.line.geometry.attributes.position.array;
+    for(let i = 0; i < points.length; i += 3) {
+      points[i+1] = Math.sin(this.time + i/3) * 2;
+      points[i+2] = Math.cos(this.time + i/3) * 2;
+    }
+    this.line.geometry.attributes.position.needsUpdate = true;
+  }
+}
+
+class HeroAnimation {
+  constructor() {
+    this.canvas = document.getElementById('hero-canvas');
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    this.renderer = new THREE.WebGLRenderer({
+      canvas: this.canvas,
+      alpha: true,
+      antialias: true
+    });
+    
+    this.init();
+    this.animate();
+  }
+  
+  init() {
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.camera.position.z = 5;
+    
+    this.yarns = [];
+    const colors = [0xff3366, 0x00f0ff, 0xff00ff];
+    
+    for(let i = 0; i < 15; i++) {
+      const geometry = new THREE.SphereGeometry(0.3, 32, 32);
+      const material = new THREE.MeshPhongMaterial({
+        color: colors[Math.floor(Math.random() * colors.length)],
+        emissive: colors[Math.floor(Math.random() * colors.length)],
+        emissiveIntensity: 0.5,
+        shininess: 100,
+        wireframe: true
+      });
+      
+      const yarn = new THREE.Mesh(geometry, material);
+      yarn.position.set(
+          (Math.random() - 0.5) * 10,
+          (Math.random() - 0.5) * 10,
+          (Math.random() - 0.5) * 10
+      );
+      
+      this.yarns.push({
+          mesh: yarn,
+          rotationSpeed: (Math.random() - 0.5) * 0.02,
+          floatSpeed: (Math.random() - 0.5) * 0.01
+      });
+      
+      this.scene.add(yarn);
+    }
+    
+    this.yarnTrail = new YarnTrail(this.scene);
+    
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+    const pointLight1 = new THREE.PointLight(0xff3366, 1, 10);
+    const pointLight2 = new THREE.PointLight(0x00f0ff, 1, 10);
+    
+    pointLight1.position.set(2, 2, 2);
+    pointLight2.position.set(-2, -2, -2);
+    
+    this.scene.add(ambientLight, pointLight1, pointLight2);
+  }
+  
+  animate() {
+    requestAnimationFrame(() => this.animate());
+    
+    this.yarns.forEach(item => {
+        item.mesh.rotation.x += item.rotationSpeed;
+        item.mesh.rotation.y += item.rotationSpeed;
+        item.mesh.position.y += item.floatSpeed;
+        
+        if(item.mesh.position.y > 5) item.mesh.position.y = -5;
+        if(item.mesh.position.y < -5) item.mesh.position.y = 5;
+    });
+    
+    this.yarnTrail.update();
+    
+    this.renderer.render(this.scene, this.camera);
+  }
+}
+
+// Initialize the hero animation
+const heroAnimation = new HeroAnimation();
+
+// Handle window resize
+window.addEventListener('resize', () => {
+  const heroAnimation = document.querySelector('#hero-canvas');
+  if(heroAnimation) {
+    heroAnimation.width = window.innerWidth;
+    heroAnimation.height = window.innerHeight;
+  }
+});
+</script>
+</body></html>
